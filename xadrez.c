@@ -40,10 +40,13 @@ printf("  +----+----+----+----+----+----+----+----+\n");
 printf("    a    b    c    d    e    f    g    h   \n");
 
 
-// lê e critica opções
+// loop principal - encerra ao ler opção mais1 != 's'
 
 do {
 printf("\n\n");
+
+// lê e critica opções para o movimento
+
 do {
     printf("Escolha a peça a ser movida (t)orre (b)ispo (r)ainha : ");
     scanf(" %c", &peca);
