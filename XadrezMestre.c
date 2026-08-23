@@ -6,6 +6,8 @@
 
 void movePeca(char p, int quanto, int paraonde, char l, int n)
 {
+    // cacula e exibe os próximos movimentos até esgotar a qtde de casas que a peça deve se deslocar
+    
     if (quanto > 0)
     {
         switch (p)
@@ -146,7 +148,7 @@ void movePeca(char p, int quanto, int paraonde, char l, int n)
                 break;
             }
         }
-
+// se extrapolou as dimensões do tabuleiro exibe msg de erro, senão exibe próximo movimento e aciona recursividade
         if (l < 'a' || l > 'h' || n < 1 || n > 8)
         {
             printf(" *Sua peça caiu do tabuleiro*\n");
@@ -169,6 +171,7 @@ int main()
     int num, casas, dir;           // número da casa, qtde de casas do movimento, direção do movimento
     int tudok = 0;                 // flag opções corretas
     char peca = ' ', letra, mais1; // peça, letra da casa, flag para continuar jogando
+    char entrada[20];              // para usar o getchar
 
     // Exibe tabuleiro
 
@@ -202,16 +205,18 @@ int main()
 
         do
         {
-            printf("Escolha a peça a ser movida "
-                   "(t)orre (b)ispo (r)ainha (c)avalo: ");
+        printf("Escolha a peça a ser movida "
+            "(t)orre (b)ispo (r)ainha (c)avalo: ");
 
-            scanf(" %c", &peca);
+        fgets(entrada, sizeof(entrada), stdin);
 
-            if (peca != 't' && peca != 'b' &&
-                peca != 'r' && peca != 'c')
-            {
-                printf("*Peça inválida*\n\n");
-            }
+        peca = entrada[0];
+
+        if (peca != 't' && peca != 'b' &&
+            peca != 'r' && peca != 'c')
+        {
+        printf("*Peça inválida*\n\n");
+        }
 
         } while (peca != 't' && peca != 'b' &&
                  peca != 'r' && peca != 'c');
@@ -221,7 +226,10 @@ int main()
         do
         {
             printf("Escolha a casa de partida da peça: ");
-            scanf(" %c%d", &letra, &num);
+            fgets(entrada, sizeof(entrada), stdin);
+
+            letra = entrada[0];
+            num = entrada[1] - '0';
 
             if ((letra < 'a' || letra > 'h') ||
                 (num < 1 || num > 8))
@@ -238,10 +246,15 @@ int main()
         {
             if (peca != 'c')
             {
-                printf("Escolha a quantidade de casas que peça deve andar: ");
-                scanf(" %d", &casas);
+                printf("Escolha a quantidade de casas que peça deve andar (1 a 7): ");
+                fgets(entrada, sizeof(entrada), stdin);
 
-                if (casas < 1 || casas > 7)
+                if (sscanf(entrada, "%d", &casas) != 1)
+                {
+                    printf("*Digite um número válido*\n\n");
+                    casas = 0;
+                }
+                else if (casas < 1 || casas > 7)
                 {
                     printf("*Quantidade de casas inválida*\n\n");
                 }
@@ -256,7 +269,9 @@ int main()
         printf("\n");
 
         while (tudok == 0)
-        {
+{
+    // lê opção de movimento
+
             printf("1.  horizontal esquerda\n");
             printf("2.  horizontal direita\n");
             printf("3.  vertical acima\n");
@@ -275,38 +290,48 @@ int main()
             printf("16. L 1 abaixo 2 direita\n");
 
             printf("Escolha a direção que a peça deve andar: ");
-            scanf(" %d", &dir);
 
-            if (dir < 1 || dir > 16)
-            {
-                printf("*Direção inválida*\n\n");
-            }
-            else if ((dir >= 5 && dir <= 8) && (peca == 't'))
-            {
-                printf("*A torre não anda em diagonal*\n\n");
-            }
-            else if ((dir >= 1 && dir <= 4) && (peca == 'b'))
-            {
-                printf("*O bispo só anda em diagonal*\n\n");
-            }
-            else if ((dir >= 9 && dir <= 16) && (peca != 'c'))
-            {
-                printf("*Somente o cavalo anda em L*\n\n");
-            }
-            else if ((dir >= 1 && dir <= 8) && (peca == 'c'))
-            {
-                printf("*O cavalo anda somente em L*\n\n");
-            }
-            else
-            {
-                tudok = 1;
-            }
-        }
+    if (scanf(" %d", &dir) != 1)
+    {
+        printf("*Digite um número entre 1 e 16*\n\n");
 
-        // Exibe movimento(s)
+        while (getchar() != '\n');
+
+        continue;
+    }
+
+    if (dir < 1 || dir > 16)
+    {
+        printf("*Direção inválida*\n\n");
+    }
+    else if ((dir >= 5 && dir <= 8) && peca == 't')
+    {
+        printf("*A torre não anda em diagonal*\n\n");
+    }
+    else if ((dir >= 1 && dir <= 4) && peca == 'b')
+    {
+        printf("*O bispo só anda em diagonal*\n\n");
+    }
+    else if ((dir >= 9 && dir <= 16) && peca != 'c')
+    {
+        printf("*Somente o cavalo anda em L*\n\n");
+    }
+    else if ((dir >= 1 && dir <= 8) && peca == 'c')
+    {
+        printf("*O cavalo anda somente em L*\n\n");
+    }
+    else
+    {
+        tudok = 1;
+    }
+}
+
+        // Exibe a casa inicial
 
         printf("\n");
         printf("%c%i", letra, num);
+
+        // Calcula e exibe os próximos movimentos
 
         switch (peca)
         {
@@ -317,17 +342,18 @@ int main()
                 break;
         }
 
-        if (letra < 'a' || letra > 'h' ||
-            num < 1 || num > 8)
-        {
-            printf(" *Sua peça caiu do tabuleiro*\n");
-            break;
-        }
-
         printf("\n\n");
-        printf("Quer fazer outro movimento? (s)im: ");
-        scanf(" %c", &mais1);
-
+        while (getchar() != '\n');
+        printf("Quer fazer outro movimento? (s)im ou (n)ão : ");
+        do {
+        fgets(entrada, sizeof(entrada), stdin);
+        mais1 = entrada[0];
+        if (mais1 != 's' && mais1 != 'n')
+                {
+                    printf("*Digite s ou n*\n");
+                }
+        } while (mais1 != 's' && mais1 != 'n');
+        
         tudok = 0;
 
     } while (mais1 == 's');
