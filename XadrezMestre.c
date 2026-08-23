@@ -2,7 +2,7 @@
 #include <string.h>
 //#include <windows.h>
 
-// Função recursiva para mover as peças
+// Função recursiva para mover todas as peças
 
 void movePeca(char p, int quanto, int paraonde, char l, int n)
 {
